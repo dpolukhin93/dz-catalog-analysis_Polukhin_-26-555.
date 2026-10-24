@@ -25,8 +25,6 @@ movies = [
 ] 
 
 def main():
-    build_report(movies)
-    return
 
    # этап 3
     # Цикл for и continue
@@ -242,4 +240,4 @@ def decade_label(year:int):
 
 
 if __name__ == "__main__":
-    main()
+    build_report(movies)
