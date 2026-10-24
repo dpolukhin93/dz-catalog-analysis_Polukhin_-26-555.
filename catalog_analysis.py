@@ -25,20 +25,58 @@ movies = [
 ] 
 
 def main():
+    build_report(movies)
+    return
+
+   # этап 3
+    # Цикл for и continue
+    print_not_comedies(movies)   
+    # Цикл while и break
+    find_first_masterpiece(movies)
+
+    # этап 8
     for movie in iter_high_rated(movies):
         print(format_report_line(movie))
         
     sum(movie["duration_min"] for movie in movies if movie["rating"] > 7)
-    #print(titles_sorted_by_rating(movies))
-    #print(top_n_by_rating(movies))
-    #print(count_by_genres(movies))
-    #print(movies_above_average(movies))
-    #print(all_genres(movies))
-    # этап 3
-    # Цикл for и continue
-    #print_not_comedies(movies)   
-    # Цикл while и break
-    #find_first_masterpiece(movies)
+
+
+def correct_year_word(years:int):
+    
+    if years % 100 in (11,12,13,14):
+        return "лет"
+    
+    last_number = years % 10
+    if last_number == 1:
+        return "год"
+    elif last_number in (2,3,4):
+        return "года"
+    else:
+        return "лет"    
+   
+
+def build_report(movies:list[dict]):
+   
+    sep = '\n'
+    
+    print("ОТЧЕТ ПО КАТАЛОГУ")
+    print(f"Средний рейтинг: {average_rating(movies)}")
+    avg_years = catalog_age_stats(movies)[2]
+    print(f"Средний возраст фильмов: {avg_years} {correct_year_word(avg_years)}")
+    print(sep)
+
+    print("Топ-3 фильма:")
+    for movie in sort_movies_by_rating(movies)[:3]:
+        print(format_report_line(movie))
+    print(sep)
+
+    print("Фильмов по жанрам:")
+    for genre, count in count_by_genre(movies).items():
+        print(f"{genre} — {count}")
+    print(sep)
+
+    print(f"Все жанры каталога: {", ".join(sorted(all_genres(movies)))}")
+
 
 
 def genres_only_in_one(movie1:dict, movie2:dict):
@@ -67,7 +105,7 @@ def movies_above_average(movies:list[dict]):
   
 
 
-def count_by_genres(movies:list[dict]):
+def count_by_genre(movies:list[dict]):
     result = {}
     for movie in movies:
         for genre in movie["genres"]:
