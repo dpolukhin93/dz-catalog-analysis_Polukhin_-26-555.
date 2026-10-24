@@ -25,21 +25,70 @@ movies = [
 ] 
 
 def main():
-   
-    print(titles_sorted_by_rating(movies))
-    print(top_n_by_rating(movies))
-   # этап 3
-   # Цикл for и continue
-   # print_not_comedies(movies)   
-   # Цикл while и break
-   # find_first_masterpiece(movies)
+    for movie in iter_high_rated(movies):
+        print(format_report_line(movie))
+        
+    sum(movie["duration_min"] for movie in movies if movie["rating"] > 7)
+    #print(titles_sorted_by_rating(movies))
+    #print(top_n_by_rating(movies))
+    #print(count_by_genres(movies))
+    #print(movies_above_average(movies))
+    #print(all_genres(movies))
+    # этап 3
+    # Цикл for и continue
+    #print_not_comedies(movies)   
+    # Цикл while и break
+    #find_first_masterpiece(movies)
 
 
-def top_n_by_rating(movies, n = 3):
+def genres_only_in_one(movie1:dict, movie2:dict):
+    return movie1["genres"] - movie2["genres"]
+
+
+def all_genres(movies:list[dict]):
+    result = set()
+    for movie in movies:
+        result.update(movie["genres"])
+        
+    return result
+
+
+def iter_high_rated(movies:list[dict], min_rating=8.0):
+    for movie in movies:
+        if movie["rating"] >= min_rating:
+          yield movie  
+
+def common_actors(movie1:dict, movie2:dict):
+    return set(movie1["actors"]) & set(movie2["actors"])
+
+def movies_above_average(movies:list[dict]):
+    avg = average_rating(movies)
+    return {movie["title"]:movie["rating"] for movie in movies if movie["rating"]>avg} 
+  
+
+
+def count_by_genres(movies:list[dict]):
+    result = {}
+    for movie in movies:
+        for genre in movie["genres"]:
+           result[genre] = result.get(genre, 0) + 1
+
+    return result
+
+def actor_filmography(movies:list[dict]):
+    result = {}
+    for movie in movies:
+        for actor in movie["actors"]:
+           filmography = result.get(actor, [])
+           filmography.append(movie["title"])
+           result[actor] = filmography
+
+    return result
+
+
+def top_n_by_rating(movies:list[dict], n = 3):
     sorted_movies = sort_movies_by_rating(movies)
-    result =[]
-    for movie in sorted_movies[:n]:
-        result.append((movie["title"], movie["rating"]))
+    result =[(movie["title"], movie["rating"]) for movie in sorted_movies[:n]]
 
     return result
 
