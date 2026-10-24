@@ -25,11 +25,78 @@ movies = [
 ] 
 
 def main():
-    print(average_rating(movies))
-    print(catalog_age_stats(movies, 2026))
-    for i in range(0, len(movies), 2):
-        dur = movies[i]["duration_min"]
-        print(f"{dur} : {duration_in_hours(dur)}")
+   
+    print(titles_sorted_by_rating(movies))
+    print(top_n_by_rating(movies))
+   # этап 3
+   # Цикл for и continue
+   # print_not_comedies(movies)   
+   # Цикл while и break
+   # find_first_masterpiece(movies)
+
+
+def top_n_by_rating(movies, n = 3):
+    sorted_movies = sort_movies_by_rating(movies)
+    result =[]
+    for movie in sorted_movies[:n]:
+        result.append((movie["title"], movie["rating"]))
+
+    return result
+
+
+def titles_sorted_by_rating(movies:list[dict]):
+    return [movie["title"] for movie in sort_movies_by_rating(movies)]
+
+
+def sort_movies_by_rating(movies:list[dict], descending = True):
+    return sorted(movies, key=lambda movie: movie["rating"], reverse=descending)
+
+
+def print_not_comedies(movies:list[dict]):
+    for movie in movies:
+        if "comedy" in movie["genres"]:
+            continue
+        print(movie["title"])
+
+
+def find_first_masterpiece(movies:list[dict]):
+    i = 0
+    while i < len(movies):
+        movie = movies[i]
+        if movie["rating"] > 9.0:
+            print(movie)
+            break
+        i += 1
+    else:
+        print("Шедевров не найдено")
+
+
+def format_report_line(movie:dict):
+    return (f'"{normalize_title(movie["title"])}" ({movie["year"]}) — '
+            f'{movie["rating"]}/10, {duration_in_hours(movie["duration_min"])}, '
+            f'жанры: {", ".join(sorted(movie["genres"]))}')
+
+
+def make_slug(title:str):
+    return title.lower().replace(" ", "-")
+
+
+def normalize_title(title:str):
+    normalized_title = ""
+    for word in title.split():
+       normalized_title +=  word[0].upper() + word[1:] + " "
+    
+    return normalized_title.rstrip()
+
+
+def count_long_movies(movies:list[dict], theshhold = 120):
+    long_movie_counter = 0
+    for movie in movies:
+        if movie["duration_min"] > theshhold:
+            long_movie_counter += 1
+    
+    return long_movie_counter    
+
 
 def average_rating(movies:list[dict]):
    
@@ -40,6 +107,7 @@ def average_rating(movies:list[dict]):
        rate_sum += movie["rating"]
 
     return round(rate_sum / total_movies, 1)
+
 
 def catalog_age_stats(movies:list[dict], current_year = 2026):
    
@@ -62,8 +130,10 @@ def catalog_age_stats(movies:list[dict], current_year = 2026):
 
     return (newest, oldest, average)
 
+
 def duration_in_hours(minutes:int):
     return f"{minutes // 60} ч {minutes % 60} м"
+
 
 def rating_tier(rating:float):
     if rating >= 9:
@@ -73,6 +143,7 @@ def rating_tier(rating:float):
     else:
         return "средне" if rating >= 5 else "слабо"
 
+
 def decade_label(year:int):
     match year:
         case _ if year > 2020:
@@ -81,6 +152,7 @@ def decade_label(year:int):
             return "старые"
         case _:
             return "недавние"
+
 
 if __name__ == "__main__":
     main()
